@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HN Search</title>
+    <link rel="icon" href='https://d1sz9gun5ag95e.cloudfront.net/favicon-16x16.png'>
+
+    <style>
+        #hnmain {
+            margin-left: 7.2%;
+            margin-top: -0.5%;
+        }
+
+        a {
+            text-decoration: none;
+            color: black;
+        }
+
+
+    </style>
+
+
+</head>
+
+<body>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+    <tbody>
+    <tr>
+        <td bgcolor="#ff6600">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+                <tbody>
+                <tr>
+                    <td style="width: 18px; padding-right: 4px;">
+                        <a th:href="@{/v1/HackerNews/home}" style="text-decoration: none;">
+                            <img src=https://d1sz9gun5ag95e.cloudfront.net/packs/media/images/logo-hn-search-a822432b.png
+                                 width="52" height="52">
+                        </a>
+                    </td>
+                    <td style="line-height: 12pt; height: 10px; padding-left: 0.4%;">
+                        <a href="search.html"
+                           style="text-decoration: none; color: black; font-size: larger;">
+                            <p class="pagetop">
+                                Search<br>HackerNews
+                            </p>
+                        </a>
+                    </td>
+                    <td style="line-height: 12pt; height: 10px; padding-left: 2%; position: relative;">
+                        <form th:action="@{/v1/HackerNews/search}" method="get">
+                            <input type="search" placeholder="Search stories by title, url or author"
+                                   id="search" name="search" th:value="${search}"
+                                   style="width: 1300px; height: 40px; font-size: 16px; padding-left: 40px;">
+                        </form>
+                        <span class="SearchIcon" style="position: absolute; left: 38px; top: 22px;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                             viewBox="0 0 24 24" fill="none" stroke="#ff6600" stroke-width="2"
+                                             stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="11" cy="11" r="8"></circle>
+                                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                        </svg>
+                                    </span>
+                    </td>
+                    <td style="text-align: right; padding-right: 4px;">
+                         <span class="pagetop" sec:authorize="isAnonymous()">
+                                        <a th:href="@{Login}" style="text-decoration: none; color: black;">login</a>
+                                    </span>
+                        <span sec:authorize="isAuthenticated()">
+                                <form action="#" th:action="@{/logout}" method="post">
+                                    <input type="submit" value="LogOut"/>
+                                </form>
+                            </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 18px; height: 40px; padding-right: 4px;">
+            <form th:action="@{/v1/HackerNews/search}">
+                <input type="hidden" name="search" th:value="${search}">
+                <select name="select" id="sortBy" onchange="this.form.submit()">
+                    <option>search by</option>
+                    <option value="stories">Stories</option>
+                    <option value="comments">Comments</option>
+                </select>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+    <tr th:each="post,postInfo:${postList}" th:if="${select.equals('stories')}">
+        <td>
+            <table>
+                <tbody>
+                <tr class='athing' id='36369553'>
+                    <td align="right" class="title" valign="top">
+                        <span class="rank" th:text="${postInfo.index+1+(pageSize*currentPage)}"></span>
+                    </td>
+                    <td class="votelinks" valign="top">
+                        <div style="text-align: center;">
+                            <a  th:if="${#authorization.expression('isAuthenticated()') and !#sets.contains(post.votedUpByUsers.![userName], #authentication.principal.name)}"
+                                th:href="@{'/v1/HackerNews/votePost?postId='+${post.postId}}">
+                                <img th:src="@{/images/caret-up-fill.svg}" alt="upvote" style="width:100%; height: 60%;">
+                            </a>
+                        </div>
+                    </td>
+                    <td class="title">
+                                <span class="titleline" th:if="${post.content.startsWith('http')}">
+                                    <a th:href="${post.content}" rel="noreferrer" th:text="${post.title}"></a>
+                                    <span class="sitebit comhead"> ( <a
+                                            th:href="@{'/v1/HackerNews/form?site='+${post.domainName}}">
+                                            <span th:text="${post.domainName}"></span>
+                                        </a>)</span>
+                                </span>
+
+                        <span class="titleline" th:unless="${post.content.startsWith('http')}">
+                                    <a th:href="@{'/v1/HackerNews/item?postId='+${post.postId}}" rel="noreferrer"
+                                       th:text="${post.title}"></a>
+                                    <span class="sitebit comhead"> ( <a
+                                            th:href="@{'/v1/HackerNews/form?site='+${post.domainName}}">
+                                            <span th:text="${post.domainName}"></span>
+                                        </a>)</span>
+                                </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td class="subtext">
+                                <span class="subline">
+                                    <span class="score" id="score_36369553"
+                                          th:text="${#lists.size(post.votedUpByUsers)}"> points</span> by <a
+                                        class="hnuser" th:href="@{'/v1/HackerNews/user?userId='+${post.user.userName}}"
+                                        th:text="${post.createdBy}"></a>
+                                    <span class="age" title="2023-06-17T12:13:22">
+                                        <a th:href="@{'/v1/HackerNews/item?postId=' + ${post.postId}}"><span
+                                                th:text="${T(com.MountBlue.Hacker.News.Clone.service.PostService).getTimeAgo(post.createdAt)}"></span></a>
+                                    </span>
+                                    <span id="unv_36369553"></span>
+                                    <span th:each="user1:${post.votedUpByUsers}">
+                                        <a th:if="${user1.userName == session.name}"
+                                           th:href="@{'/v1/HackerNews/votePost?postId='+${post.postId}+'&userId='+${session.name}}">
+                                            | <span>un-vote</span>
+                                        </a>
+                                    </span>
+                                    | <a th:if="${post.content.startsWith('http')}"
+                                         th:href="@{'/v1/HackerNews/item?postId=' + ${post.postId}}">&nbsp;Discussion</a>
+                                    <a th:unless="${post.content.startsWith('http')}"
+                                       th:href="@{'/v1/HackerNews/item?postId=' + ${post.postId}}">
+                                        <span th:text="${#lists.size(post.commentId)}"></span> comments
+                                    </a>
+                                </span>
+
+                        </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr th:each="comment,commentInfo:${commentList}" th:if="${select.equals('comments')}">
+        <td>
+            <table>
+                <tbody>
+                <tr>
+                    <p th:text="${comment.comment}"></p>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<footer>
+    <a
+            th:href="@{'/v1/HackerNews/search?'+${search != null && search != '' ? 'search=' + search : ''}+'&p='+${currentPage+1}}">
+        <p th:if="${currentPage < totalPages-1}" style="float: left;">More</p>
+    </a>
+</footer>
+</body>
+
+</html>

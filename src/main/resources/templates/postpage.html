@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Page</title>
+    <link rel="icon" href="https://news.ycombinator.com/y18.svg">
+
+    <style>
+        #hnmain{
+            margin-left: 7%;
+        }
+        a{
+        text-decoration: none;
+        color: black;
+     }
+
+    </style>
+</head>
+<body>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+    <tbody>
+    <tr>
+        <td bgcolor="#ff6600">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+                <tbody>
+                <tr>
+                    <td style="width: 18px; padding-right: 4px;">
+                        <a th:href="@{/v1/HackerNews/}" style="text-decoration: none;">
+                            <img src="https://news.ycombinator.com/y18.svg" width="18" height="18"
+                                 style="border: 1px white solid; display: block;">
+                        </a>
+                    </td>
+                    <td style="line-height: 12pt; height: 10px;">
+                                    <span class="pagetop">
+                                        <b class="hnname"><a th:href="@{/v1/HackerNews/news}"
+                                                             style="text-decoration: none; color: black;">Hacker News</a></b>
+                                        <a th:href="@{/v1/HackerNews/welcome.html}"
+                                           style="text-decoration: none; color: black; padding-left: 1%;">Welcome</a> |
+                                        <a th:href="@{/v1/HackerNews/new}"
+                                           style="text-decoration: none; color: black; padding-left: 1%;">new</a> |
+                                        <a th:href="@{/v1/HackerNews/front}"
+                                           style="text-decoration: none; color: black;">past</a> |
+                                        <a th:href="@{/v1/HackerNews/newComments}"
+                                           style="text-decoration: none; color: black;">comments</a> |
+                                        <a th:href="@{/v1/HackerNews/ask}" style="text-decoration: none; color: black;">ask</a> |
+                                        <a th:href="@{/v1/HackerNews/show}"
+                                           style="text-decoration: none; color: black;">show</a> |
+                                        <a th:href="@{/v1/HackerNews/jobs}"
+                                           style="text-decoration: none; color: black;">jobs</a> |
+                                        <a th:href="@{/v1/HackerNews/createPost}"
+                                           style="text-decoration: none; color: black;">submit</a>
+                                    </span>
+                    </td>
+                    <td style="text-align: right; padding-right: 4px;">
+                        <!--                                    <span class="pagetop">-->
+                        <!--                                        <a href="" style="text-decoration: none; color: black;">login</a>-->
+                        <!--                                    </span>-->
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+    <tbody>
+    <tr th:object="${post}">
+        <td style="padding-left: 2%; padding-top: 1%;">
+            <p th:text="${post.content}"></p>
+        </td>
+    </tr>
+    </tbody>
+    <tbody>
+    <tr>
+        <td style="padding-left: 2%; padding-top: 1%;">
+            <form th:action="@{/v1/HackerNews/saveComment}" method="post">
+                <textarea id="comment" name="comment" rows="8" cols="80" required
+                          th:value="${comment}"></textarea><br><br>
+                <input type="hidden" th:value="${post.postId}" name="postId">
+                <input type="submit" value="Add Comment">
+            </form>
+        </td>
+    </tr>
+    </tbody>
+    <tbody>
+    <tr th:each="comment : ${commentList}">
+        <td style="padding-left: 2%; padding-top: 1%;">
+            <p th:text="${comment.comment}"></p>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+<footer>
+    <center><span class="yclinks"><a th:href="@{/v1/HackerNews/newsguidelines.html}">Guidelines</a> | <a
+            th:href="@{/v1/HackerNews/newsfaq.html}">FAQ</a> | <a href="">Lists</a> | <a
+            href="https://github.com/HackerNews/API">API</a> | <a th:href="@{/v1/HackerNews/security.html}">Security</a>
+            | <a href="https://www.ycombinator.com/legal/">Legal</a> | <a
+                href="https://www.ycombinator.com/apply/">Apply to YC</a> | <a
+                href="mailto:sidakash014@gmail.com">Contact</a></span><br><br>
+        <form th:action="@{/v1/HackerNews/search}" method="get">
+            Search: <input autocapitalize="off" autocomplete="false" autocorrect="off" size="17" spellcheck="false"
+                           type="search" name="search" th:value="${search}">
+        </form>
+    </center>
+</footer>
+</html>

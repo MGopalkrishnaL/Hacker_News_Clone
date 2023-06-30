@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User</title>
+    <link rel="icon" href="https://news.ycombinator.com/y18.svg">
+
+    <style>
+        #hnmain{
+            margin-left: 7%;
+        }
+        a{
+        text-decoration: none;
+        color: black;
+     }
+
+
+    </style>
+
+
+</head>
+<body>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+    <tbody>
+    <tr>
+        <td bgcolor="#ff6600">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+                <tbody>
+                <tr>
+                    <td style="width: 18px; padding-right: 4px;">
+                        <a th:href="@{/v1/HackerNews/home}" style="text-decoration: none;">
+                            <img src="https://news.ycombinator.com/y18.svg" width="18" height="18"
+                                 style="border: 1px white solid; display: block;">
+                        </a>
+                    </td>
+                    <td style="line-height: 12pt; height: 10px;">
+                                    <span class="pagetop">
+                                        <b class="hnname"><a href="" style="text-decoration: none; color: black;">Hacker News</a></b>
+                                        <a th:href="@{/v1/HackerNews/welcome.html}"
+                                           style="text-decoration: none; color: black; padding-left: 1%;">welcome</a> |
+                                        <a th:href="@{/v1/HackerNews/new}"
+                                           style="text-decoration: none; color: black; padding-left: 1%;">new</a> |
+                                        <a th:href="@{/v1/HackerNews/front}"
+                                           style="text-decoration: none; color: black;">past</a> |
+                                        <a th:href="@{/v1/HackerNews/newComments}"
+                                           style="text-decoration: none; color: black;">comments</a> |
+                                        <a th:href="@{/v1/HackerNews/ask}" style="text-decoration: none; color: black;">ask</a> |
+                                        <a th:href="@{/v1/HackerNews/show}"
+                                           style="text-decoration: none; color: black;">show</a> |
+                                        <a th:href="@{/v1/HackerNews/jobs}"
+                                           style="text-decoration: none; color: black;">jobs</a> |
+                                        <a th:href="@{/v1/HackerNews/createPost}"
+                                           style="text-decoration: none; color: black;">submit</a>
+                                    </span>
+                    </td>
+                    <td style="text-align: right; padding-right: 4px;">
+                                     <span class="pagetop" sec:authorize="isAnonymous()">
+                                        <a th:href="@{Login}" style="text-decoration: none; color: black;">login</a>
+                                    </span>
+                        <span sec:authorize="isAuthenticated()">
+                                <form action="#" th:action="@{/logout}" method="post">
+                                    <input type="submit" value="LogOut"/>
+                                </form>
+                            </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left: 1%;" th:object="${user}">
+            <p>user:<span th:text="${user.userName}"></span></p>
+            <p>created:<span
+                    th:text="${T(com.MountBlue.Hacker.News.Clone.service.PostService).getTimeAgo(user.createdAt)}"></span>
+            </p>
+            <p>karma:1</p>
+            <!--            <span>about:<textarea name="about" rows="7" cols="40"></span>-->
+            <p>email:<span th:text="${user.email}"></span>
+            <p>
+                <!--                    <span>showdead:-->
+                <!--                        <select name="condition1" required>-->
+                <!--                        <option value="no">no</option>-->
+                <!--                        <option value="yes">yes</option>-->
+                <!--                        </select>-->
+                <!--                    </span><br><br>-->
+                <!--                <span>noprocrast:-->
+                <!--                        <select name="condition2" required>-->
+                <!--                        <option value="no">no</option>-->
+                <!--                        <option value="yes">yes</option>-->
+                <!--                        </select>-->
+                <!--                    </span>-->
+                <!--            <p>maxvisit:<input type="number" name="maxvist"></p>-->
+                <!--            <p>minaway:<input type="number" name="minaway"></p>-->
+                <!--            <p>delay:<input type="number" name="delay"></p>-->
+                <!--            <a href="#">change password</a><br>-->
+                <!--            <a href="#">submission</a><br>-->
+                <!--            <a href="#">comments</a><br>-->
+<!--                            <a th:href="@{/v1/HackerNews/hideList}" >List of post hidden</a><br>-->
+                <!--            <span>-->
+                                        <a th:href="@{'/v1/HackerNews/upvotedList?userName='+${user.userName}}">upvoted</a>
+<!--                                        <a th:href="@{'/v1/HackerNews/CommentList?userName='+${user.userName}}">comments</a>-->
+                <!--                    </span><br>-->
+                <!--            <span>-->
+                <!--                        <a href="#">favorite submissions</a>/-->
+                <!--                        <a href="#">comments</a> (public)-->
+                <!--                    </span><br><br>-->
+                <!--            <input type="submit" name="update">-->
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>

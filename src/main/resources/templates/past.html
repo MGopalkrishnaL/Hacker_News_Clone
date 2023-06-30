@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Front|Hacker News Clone</title>
+    <link rel="icon" href="https://news.ycombinator.com/y18.svg">
+
+    <style>
+     #Navigation {
+        border: 0;
+        padding: 0;
+        width: 85%;
+        background-color: #ff6600;
+        }
+
+     #Content {
+        border: 0;
+        padding: 0;
+        width: 85%;
+        background-color: #f6f6ef;
+        }
+
+     body{
+        margin-left: 10%;
+        }
+
+     footer{
+        margin-right: 25%;
+     }
+     a{
+        text-decoration: none;
+        color: black;
+     }
+
+    </style>
+</head>
+<body>
+<table id="Navigation">
+    <tbody>
+    <tr>
+        <td>
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+                <tbody>
+                <tr>
+                    <td style="width: 18px; padding-right: 4px;">
+                        <a th:href="@{/v1/HackerNews/}" style="text-decoration: none;">
+                            <img src="https://news.ycombinator.com/y18.svg" width="18" height="18"
+                                 style="border: 1px white solid; display: block;">
+                        </a>
+                    </td>
+                    <td style="line-height: 12pt; height: 10px;">
+                                    <span class="pagetop">
+                                <b class="hnname"><a th:href="@{/v1/HackerNews/news}"
+                                                     style="text-decoration: none; color: black;">Hacker News</a></b>
+                                        <a th:href="@{/v1/HackerNews/welcome.html}"
+                                           style="text-decoration: none; color: black; padding-left: 1%;">Welcome</a> |
+                                        <a th:href="@{/v1/HackerNews/new}"
+                                           style="text-decoration: none; color: black; padding-left: 1%;">new</a> |
+                                <a th:href="@{/v1/HackerNews/front}"
+                                   style="text-decoration: none; color: black;">past</a> |
+                                <a th:href="@{/v1/HackerNews/newComments}" style="text-decoration: none; color: black;">comments</a> |
+                                <a th:href="@{/v1/HackerNews/ask}" style="text-decoration: none; color: black;">ask</a> |
+                                <a th:href="@{/v1/HackerNews/show}"
+                                   style="text-decoration: none; color: black;">show</a> |
+                                <a th:href="@{/v1/HackerNews/jobs}"
+                                   style="text-decoration: none; color: black;">jobs</a> |
+                                <a th:href="@{/v1/HackerNews/createPost}" style="text-decoration: none; color: black;">submit</a>
+                            </span>
+                    </td>
+                    <td style="text-align: right; padding-right: 4px;">
+                         <span class="pagetop" sec:authorize="isAnonymous()">
+                                        <a th:href="@{Login}" style="text-decoration: none; color: black;">login</a>
+                                    </span>
+                        <span sec:authorize="isAuthenticated()">
+                                <form action="#" th:action="@{/logout}" method="post">
+                                    <input type="submit" value="LogOut"/>
+                                </form>
+                            </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <table>
+        <tbody>
+        <tr>
+            <td>
+                <form th:action="@{/v1/HackerNews/front}" method="post">
+                    <p>Current Date: <span th:text="${day}"></span></p>
+                    <input type="hidden" name="day" th:value="${day}"/>
+                    <button type="submit" name="action" th:value="previousDay">Go back a day</button>
+                    <button type="submit" name="action" th:value="previousMonth">Go back a month</button>
+                    <button type="submit" name="action" th:value="previousYear">Go back a year</button>
+                    <button type="submit" name="action" th:value="nextDay">Go forward a day</button>
+                    <button type="submit" name="action" th:value="nextMonth">Go forward a month</button>
+                    <button type="submit" name="action" th:value="nextYear">Go forward a year</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <tr th:each="post,postInfo:${postList}">
+        <td>
+            <table  id="Content">
+                <tbody>
+                <tr class='athing'>
+                    <td align="right" class="title" valign="top">
+                        <span class="rank" th:text="${postInfo.index+1+(pageSize*currentPage)}"></span>
+                    </td>
+                    <td class="votelinks" valign="top">
+                        <div style="text-align: center;">
+                            <a th:href="@{'/postView/'+${post.postId}}">
+                            </a>
+                        </div>
+                    </td>
+                    <td class="title">
+    <span class="titleline" th:if="${post.content.startsWith('http')}">
+      <a th:href="${post.content}" rel="noreferrer" th:text="${post.title}"><img src="/static/upvote.png" width="4%"
+                                                                                 height="4%"></a>
+        <span class="sitebit comhead"> ( <a th:href="@{'/v1/HackerNews/form?site='+${post.domainName}}">
+          <span th:text="${post.domainName}"></span>
+        </a>)</span>
+    </span>
+
+                        <span class="titleline" th:unless="${post.content.startsWith('http')}">
+      <a th:href="@{'/v1/HackerNews/item?postId='+${post.postId}}" rel="noreferrer" th:text="${post.title}"></a>
+        <span class="sitebit comhead"> ( <a th:href="@{'/v1/HackerNews/form?site='+${post.domainName}}">
+          <span th:text="${post.domainName}"></span>
+        </a>)</span>
+    </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td class="subtext">
+    <span class="subline">
+      <span th:text="${#lists.size(post.votedUpByUsers)}"></span> Points by
+                    <a th:href="@{'/v1/HackerNews/user?userId='+${post.user.userName}}" th:text="${post.createdBy}"></a>
+      <span class="age" title="2023-06-17T12:13:22">
+        <a th:href="@{'/v1/HackerNews/item?postId=' + ${post.postId}}"><span
+                th:text="${T(com.MountBlue.Hacker.News.Clone.service.PostService).getTimeAgo(post.createdAt)}"></span></a>
+      </span>
+      <span id="unv_36369553"></span> |
+        <a th:if="${post.content.startsWith('http')}" th:href="@{'/v1/HackerNews/item?postId=' + ${post.postId}}">&nbsp;Discussion</a>
+<a th:unless="${post.content.startsWith('http')}" th:href="@{'/v1/HackerNews/item?postId=' + ${post.postId}}">
+    <span th:text="${#lists.size(post.commentId)}"></span> comments
+</a>
+    </span>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+<footer>
+    <a th:href="@{'/v1/HackerNews/front?'+'p='+${currentPage+1}}"><p th:if="${currentPage < totalPages-1}"
+                                                                     style="float: left;">More</p></a>
+    <div style="text-align: center;"><span class="yclinks">
+            <a th:href="@{/v1/HackerNews/newsguidelines.html}">Guidelines</a> |
+            <a th:href="@{/v1/HackerNews/newsfaq.html}">FAQ</a> |
+            <a href="">Lists</a> |
+            <a href="https://github.com/HackerNews/API">API</a> |
+            <a th:href="@{/v1/HackerNews/security.html}">Security</a> |
+            <a href="https://www.ycombinator.com/legal/">Legal</a> |
+            <a href="https://www.ycombinator.com/apply/">Apply to YC</a> |
+            <a href="mailto:sidakash014@gmail.com">Contact</a>
+        </span><br><br>
+        <form method="get" th:action="@{/v1/HackerNews/search}">Search: <input type="text" name="search" size="17"
+                                                    autocorrect="off" spellcheck="false" autocapitalize="off"
+                                                    autocomplete="false" th:value="${search}"></form>
+    </div>
+</footer>
+</html>

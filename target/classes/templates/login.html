@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="icon" href="https://news.ycombinator.com/y18.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f6f6ef;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #ff6600;
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button[type="submit"] {
+            background-color: #ff6600;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #e64a00;
+        }
+
+        p {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            background-color: #ff6600;
+            color: white;
+            padding: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        .alert i {
+            color: white;
+        }
+
+        .google-btn {
+            background-color: #dd4b39;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .google-btn:hover {
+            background-color: #c23321;
+        }
+
+        .google-icon {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Login</h1>
+    <form th:action="@{/authenticateTheUser}" method="post">
+        <div class="alert" th:if="${param.error}">
+            <i>Sorry! You entered an invalid username/password.</i>
+        </div>
+        <div class="alert" th:if="${param.logout}">
+            <i>You have been logged out</i>
+        </div>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="username" placeholder="Enter the Name of the User">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" placeholder="Enter the password">
+        <button type="submit">Submit</button>
+    </form>
+    <p>Don't have an account? <a th:href="@{/v1/HackerNews/CreateUser}">Create one</a></p>
+    <div>
+        <a th:href="@{/oauth2/authorization/google}">
+            <button class="google-btn">
+                <span class="google-icon"><i class="fab fa-google"></i></span>
+                Sign in with Google
+            </button>
+        </a>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Comments</title>
+    <link rel="icon" href="https://news.ycombinator.com/y18.svg">
+    <style>
+        #Navigation {
+            border: 0;
+            padding: 0;
+            width: 85%;
+            background-color: #ff6600;
+        }
+
+        #Content {
+            border: 0;
+            padding: 0;
+            width: 85%;
+            background-color: #f6f6ef;
+        }
+
+        body{
+            margin-left: 10%;
+        }
+
+        footer{
+            margin-right: 25%;
+        }
+        a{
+        text-decoration: none;
+        color: black;
+     }
+
+
+
+
+
+    </style>
+</head>
+<body>
+<table id="Navigation">
+    <tbody>
+    <tr>
+        <td>
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+                <tbody>
+                <tr>
+                    <td style="width: 18px; padding-right: 4px;">
+                        <a th:href="@{/v1/HackerNews/}" style="text-decoration: none;">
+                            <img src="https://news.ycombinator.com/y18.svg" width="18" height="18"
+                                 style="border: 1px white solid; display: block;">
+                        </a>
+                    </td>
+                    <td style="line-height: 12pt; height: 10px;">
+                                    <span class="pagetop">
+                                <b class="hnname"><a th:href="@{/v1/HackerNews/news}"
+                                                     style="text-decoration: none; color: black;">Hacker News</a>
+                                </b>
+                                <a th:href="@{/v1/HackerNews/welcome.html}"
+                                   style="text-decoration: none; color: black; padding-left: 1%;">Welcome</a> |
+                                <a th:href="@{/v1/HackerNews/new}"
+                                   style="text-decoration: none; color: black; padding-left: 1%;">new</a> |
+                                <a th:href="@{/v1/HackerNews/front}"
+                                   style="text-decoration: none; color: black;">past</a> |
+                                <a th:href="@{/v1/HackerNews/newComments}" style="text-decoration: none; color: black;">comments</a> |
+                                <a th:href="@{/v1/HackerNews/ask}" style="text-decoration: none; color: black;">ask</a> |
+                                <a th:href="@{/v1/HackerNews/show}"
+                                   style="text-decoration: none; color: black;">show</a> |
+                                <a th:href="@{/v1/HackerNews/jobs}"
+                                   style="text-decoration: none; color: black;">jobs</a> |
+                                <a th:href="@{/v1/HackerNews/createPost}" style="text-decoration: none; color: black;">submit</a>
+                            </span>
+                    </td>
+                    <td style="text-align: right; padding-right: 4px;">
+                         <span class="pagetop" sec:authorize="isAnonymous()">
+                                        <a th:href="@{Login}" style="text-decoration: none; color: black;">login</a>
+                                    </span>
+                        <span sec:authorize="isAuthenticated()">
+                                <form action="#" th:action="@{/logout}" method="post">
+                                    <input type="submit" value="LogOut"/>
+                                </form>
+                            </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<section>
+    <table id="Content">
+        <tbody>
+        <tr th:each="comment:${commentList}">
+            <td>
+                <table>
+                    <tbody>
+                    <tr id="pagespace" title="New Comments" style="height:10px"></tr>
+                    <tr>
+                        <td>
+                            <table>
+                                <tr class='athing' id='36389085'>
+                                    <td class='ind'></td>
+                                    <td class="votelinks">
+                                        <div style="text-align: center;">
+                                            <a th:if="${!#sets.contains(comment.votedUpByUsers.![userName], session.name)}"
+                                               th:href="@{'/v1/HackerNews/voteComment?commentId=' + ${comment.commentId} + '&userId=' + ${session.name}}">
+                                                <img th:src="@{/images/caret-up-fill.svg}" alt="upvote"
+                                                     style="width:100%; height: 60%;">
+                                            </a>
+                                        </div>
+                                    </td>
+                                    <td class="default">
+                                        <div style="margin-top:2px; margin-bottom:-10px;">
+                    <span class="comhead">
+                      <a th:href="@{'/v1/HackerNews/user?userId='+ ${comment.name}}" class="hnuser"
+                         th:text="${comment.name}"></a>
+                      <span class="age" title="2023-06-19T09:37:14">
+                        <a th:text="${T(com.MountBlue.Hacker.News.Clone.service.PostService).getTimeAgo(comment.createdAt)}"></a>
+                      </span>
+                      <span id="unv_36389085"></span>
+                      <span class='navs'>
+                          <span th:each="user1:${comment.votedUpByUsers}">
+         <a th:if="${user1.userName == session.name}"
+            th:href="@{'/v1/HackerNews/voteComment?commentId='+${comment.commentId}+'&userId='+${session.name}}">
+           | <span>un-vote</span>
+        </a>
+        </span>
+                        <span class="onstory">
+                            | on: <a th:href="@{'/v1/HackerNews/item?postId='+${comment.postId.postId}}"
+                                     th:text="${comment.postId.title}"></a>
+                        </span>
+                      </span>
+                    </span>
+                                        </div>
+                                        <br>
+                                        <div class="comment">
+                                            <span class="comment" th:text="${comment.comment}"></span>
+                                            <div class='reply'></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+    </table>
+</section>
+<footer>
+    <div style="text-align: center;">
+        <span class="yclinks">
+            <a th:href="@{/v1/HackerNews/newsguidelines.html}">Guidelines</a> |
+            <a th:href="@{/v1/HackerNews/newsfaq.html}">FAQ</a> |
+            <a href="https://github.com/HackerNews/API">API</a> |
+            <a th:href="@{/v1/HackerNews/security.html}">Security</a> |
+            <a href="https://www.ycombinator.com/legal/">Legal</a> |
+            <a href="https://www.ycombinator.com/apply/">Apply to YC</a> |
+            <a href="mailto:sidakash014@gmail.com">Contact</a>
+        </span>
+        <br><br>
+        <form th:action="@{/v1/HackerNews/search}" method="get">
+            Search: <input autocapitalize="off" autocomplete="false" autocorrect="off" size="17" spellcheck="false"
+                           name="search" type="search">
+        </form>
+    </div>
+</footer>
+</body>
+</html>
